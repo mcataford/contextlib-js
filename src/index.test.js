@@ -1,4 +1,4 @@
-const { AbstractContextManager } = require('.')
+const { AbstractContextManager, Suppress } = require('.')
 
 describe('contextlib', () => {
     describe('AbstractContextManager', () => {
@@ -72,6 +72,34 @@ describe('contextlib', () => {
             context.do(spy)
 
             expect(spy).toHaveBeenCalledWith({ ...firstScope, ...secondScope })
+        })
+    })
+
+    describe('Suppress', () => {
+        it('suppresses the given exception by name', () => {
+            const fancyError = new Error()
+            fancyError.name = 'MovedTooFastBrokeThingsError'
+
+            expect(() =>
+                Suppress.suppress(fancyError.name)
+                    .with({})
+                    .do(() => {
+                        throw fancyError
+                    }),
+            ).not.toThrow()
+        })
+
+        it('lets other errors go through', () => {
+            const fancyError = new Error()
+            fancyError.name = 'MovedTooFastBrokeThingsError'
+
+            expect(() =>
+                Suppress.suppress('SomeOtherErrorName')
+                    .with({})
+                    .do(() => {
+                        throw fancyError
+                    }),
+            ).toThrow()
         })
     })
 })
