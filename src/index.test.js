@@ -1,94 +1,66 @@
-const BaseContextManager = require('.')
+const { AbstractContextManager } = require('.')
 
-describe('BaseContextManager', () => {
-    it('executes the enter and exit hooks in order', () => {
-        const spy = jest.fn()
+describe('contextlib', () => {
+    describe('AbstractContextManager', () => {
+        it('onEnter runs before the given handler', () => {
+            const spy = jest.fn()
 
-        class Context extends BaseContextManager {
-            _enter() {
-                spy('enter')
+            class Context extends AbstractContextManager {
+                onEnter() {
+                    spy('enter')
+                }
             }
 
-            _exit() {
-                spy('exit')
-            }
-        }
+            new Context().do(() => spy('handler'))
 
-        new Context().do(() => spy('body'))
-
-        expect(spy).toHaveBeenNthCalledWith(1, 'enter')
-        expect(spy).toHaveBeenNthCalledWith(2, 'body')
-        expect(spy).toHaveBeenNthCalledWith(3, 'exit')
-    })
-
-    it('executes the error hook if the fragment throws an error', () => {
-        const spy = jest.fn()
-
-        class Context extends BaseContextManager {
-            _enter() {
-                spy('enter')
-            }
-
-            _error() {
-                spy('error')
-            }
-
-            _exit() {
-                spy('exit')
-            }
-        }
-
-        new Context().do(() => {
-            throw new Error()
+            expect(spy).toHaveBeenNthCalledWith(1, 'enter')
+            expect(spy).toHaveBeenNthCalledWith(2, 'handler')
         })
 
-        expect(spy).toHaveBeenNthCalledWith(1, 'enter')
-        expect(spy).toHaveBeenNthCalledWith(2, 'error')
-        expect(spy).toHaveBeenNthCalledWith(3, 'exit')
-    })
+        it('onExit runs after the given handler', () => {
+            const spy = jest.fn()
 
-    it('scope is initially empty', () => {
-        const context = new BaseContextManager()
+            class Context extends AbstractContextManager {
+                onExit() {
+                    spy('exit')
+                }
+            }
 
-        expect(context.scope).toEqual({})
-    })
+            new Context().do(() => spy('handler'))
 
-    it('initial scope can be provided to the constructor', () => {
-        const scopeData = {
-            yeet: 'wo',
-            'wo?': 'yeet',
-        }
-        const context = new BaseContextManager(scopeData)
-
-        expect(context.scope).toEqual(scopeData)
-    })
-
-    it('additional scope can be added using with', () => {
-        const initialScope = { yeet: 'wo' }
-        const additionalScope = { yeetus: 'wooo' }
-        const context = new BaseContextManager(initialScope)
-        expect(context.with(additionalScope).scope).toEqual({
-            ...initialScope,
-            ...additionalScope,
+            expect(spy).toHaveBeenNthCalledWith(1, 'handler')
+            expect(spy).toHaveBeenNthCalledWith(2, 'exit')
         })
-    })
 
-    it('with can be stacked', () => {
-        const initialScope = { yeet: 'wo' }
-        const additionalScope = { yeetus: 'wooo' }
-        const context = new BaseContextManager()
-        expect(context.with(initialScope).with(additionalScope).scope).toEqual({
-            ...initialScope,
-            ...additionalScope,
+        it('onExit is called with the error if ones is thrown', () => {
+            const spy = jest.fn()
+
+            class Context extends AbstractContextManager {
+                onExit(error) {
+                    spy(error)
+                }
+            }
+
+            const error = new Error('Oh no!')
+            expect(() =>
+                new Context().do(() => {
+                    throw error
+                }),
+            ).not.toThrow()
+            expect(spy).toHaveBeenCalledWith(error)
         })
-    })
 
-    it('do run the given function with the provided context', () => {
-        const context = new BaseContextManager()
-        const spy = jest.fn()
-        const scope = { yeet: 'wo' }
-        context.with(scope).do(spy)
+        it('scope is passed to the handler', () => {
+            const spy = jest.fn()
 
-        expect(spy).toHaveBeenCalledWith(scope)
+            class Context extends AbstractContextManager {}
+
+            const context = new Context()
+            const mockScope = { wo: 'yeet!' }
+
+            context.with(mockScope).do(spy)
+
+            expect(spy).toHaveBeenCalledWith(mockScope)
+        })
     })
 })
