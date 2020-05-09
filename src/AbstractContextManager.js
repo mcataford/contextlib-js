@@ -20,6 +20,7 @@ class AbstractContextManager {
             handler(this.scope)
         } catch (e) {
             this.thrown = e
+            this._onCatch(e)
         } finally {
             this.onExit(this.thrown)
         }
@@ -30,6 +31,8 @@ class AbstractContextManager {
     }
 
     onExit() {}
+
+    _onCatch() {}
 }
 
 module.exports = AbstractContextManager
