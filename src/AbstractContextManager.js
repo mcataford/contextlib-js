@@ -5,13 +5,16 @@ class AbstractContextManager {
     }
 
     static with(additionalScope) {
-        const context = new AbstractContextManager()
-        return context.with(additionalScope)
+        return new AbstractContextManager().with(additionalScope)
     }
 
     with(additionalScope) {
         this.scope = { ...this.scope, ...additionalScope }
         return this
+    }
+
+    static do(handler) {
+        new AbstractContextManager().do(handler)
     }
 
     do(handler) {
