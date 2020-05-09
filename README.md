@@ -31,24 +31,24 @@ You can also extend or use any of the ready-made contexts, detailed in the API r
 
 `contextlib-js` could be used to create an easy-to-use wrapper that handles logging task progress and results:
 
-```
-class LoggedContext extends AbstractContextManager {
-    onEnter() {
-        myLoggingLibrary.log('Task started')
-    }
-
-    onExit(e) {
-        if (e) {
+```js
+// LoggedContext.js
+const LoggedContext = createContext({ 
+    onEnter: (scope) => { myLoggingLibrary.log('Task started', scope) },
+    onExit: (error) => {
+        if (error) {
             myLoggingLibrary.log('Oops! Something happened!')
         } else {
             myLoggingLibrary.log('All done!')
         }
     }
-}
-```
 
+module.exports = LoggedContext
+``` 
 Once implemented, you can quickly make logged calls to your own code via
 
-```
+```js
 LoggedContext.do(thing)
 ```
+
+For most use cases, using `createContext` is the quickest way to go. Otherwise, you can roll out your own use case by extending the `AbstractContextManager` class.
