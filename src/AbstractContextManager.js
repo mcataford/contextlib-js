@@ -33,8 +33,6 @@ class AbstractContextManager {
     }
 
     onExit() {}
-
-    _onCatch() {}
 }
 
 module.exports = AbstractContextManager
