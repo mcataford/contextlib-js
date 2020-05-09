@@ -55,10 +55,9 @@ describe('contextlib', () => {
 
             class Context extends AbstractContextManager {}
 
-            const context = new Context()
             const mockScope = { wo: 'yeet!' }
 
-            context.with(mockScope).do(spy)
+            Context.with(mockScope).do(spy)
 
             expect(spy).toHaveBeenCalledWith(mockScope)
         })
@@ -67,7 +66,7 @@ describe('contextlib', () => {
             const firstScope = { a: 1 }
             const secondScope = { b: 2 }
             class Context extends AbstractContextManager {}
-            const context = new Context().with(firstScope).with(secondScope)
+            const context = Context.with(firstScope).with(secondScope)
 
             const spy = jest.fn()
             context.do(spy)
