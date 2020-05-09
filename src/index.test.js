@@ -62,5 +62,17 @@ describe('contextlib', () => {
 
             expect(spy).toHaveBeenCalledWith(mockScope)
         })
+
+        it('with compounts to create final scope', () => {
+            const firstScope = { a: 1 }
+            const secondScope = { b: 2 }
+            class Context extends AbstractContextManager {}
+            const context = new Context().with(firstScope).with(secondScope)
+
+            const spy = jest.fn()
+            context.do(spy)
+
+            expect(spy).toHaveBeenCalledWith({ ...firstScope, ...secondScope })
+        })
     })
 })
