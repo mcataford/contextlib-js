@@ -25,31 +25,30 @@ ContextManager.with({ <some additional scope }).do(thing)
 // The net result of this logs the `scope` contents.
 ```
 
-You can also extend or use any of the ready-made contexts: 
+You can also extend or use any of the ready-made contexts, detailed in the API reference.
 
-### `AbstractContextManager`
+### Example
 
-`AbstractContextManager` is the base class through which all of the other synchronous context managers are implemented. You can extend it to create your own. When extending it, you should implement one or more of the following:
+`contextlib-js` could be used to create an easy-to-use wrapper that handles logging task progress and results:
 
 ```
-class MyCoolContext extends AbstractContextManager {
-    onEnter([scope]) {
-        // Is executed before the handler and has access to the scope.
-        // The scope returned will be merged with the current scope.
+class LoggedContext extends AbstractContextManager {
+    onEnter() {
+        myLoggingLibrary.log('Task started')
     }
 
-    onExit([e]) {
-        // Is executed at the end of the context's execution lifecycle
+    onExit(e) {
+        if (e) {
+            myLoggingLibrary.log('Oops! Something happened!')
+        } else {
+            myLoggingLibrary.log('All done!')
+        }
     }
 }
 ```
 
-### Suppress
-
-_[See Python ref](https://docs.python.org/3/library/contextlib.html#contextlib.suppress)_
-
-`Suppress` suppresses the given exception (by name) but rethrows any other. This can be used as a selective `try`/`catch`:
+Once implemented, you can quickly make logged calls to your own code via
 
 ```
-Suppress.suppress(exceptionName: string).with({ context: 'stuff' }).do(thing)
+LoggedContext.do(thing)
 ```
