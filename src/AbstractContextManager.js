@@ -1,6 +1,6 @@
 class AbstractContextManager {
-    constructor() {
-        this.scope = {}
+    constructor(initialScope) {
+        this.scope = initialScope || {}
         this.thrown = null
     }
 
@@ -23,7 +23,6 @@ class AbstractContextManager {
             handler(this.scope)
         } catch (e) {
             this.thrown = e
-            this._onCatch(e)
         } finally {
             this.onExit(this.thrown)
         }
