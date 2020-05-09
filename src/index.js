@@ -1,3 +1,5 @@
-const BaseContextManager = require('./ContextManager')
+const AbstractContextManager = require('./AbstractContextManager')
 
-module.exports = BaseContextManager
+module.exports = {
+    AbstractContextManager,
+}
