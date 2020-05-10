@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
+    "test:coverage": "jest src --coverage",
     "test": "jest src",
     "lint": "eslint src"
   },
