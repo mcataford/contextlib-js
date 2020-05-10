@@ -1,4 +1,4 @@
-# contextjs
+# contextlib-js
 Like Python's `contextlib`, but weirder
 
 ## Overview
@@ -7,7 +7,9 @@ This package is Javascript rendition of [Python's `contextlib`](https://docs.pyt
 
 ## Install
 
-Once v1 is ready, it will be released on `npm`. Until then, you can simple pull down the source and pack it yourself if you are so inclined.
+```
+yarn add contextlib-js
+```
 
 ## Usage
 
