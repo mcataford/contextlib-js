@@ -11,7 +11,7 @@ Once v1 is ready, it will be released on `npm`. Until then, you can simple pull 
 
 ## Usage
 
-`contextlib-js` offers implementations of several context managers defined in `contextlib`'s spec.
+`contextlib-js` exposes implementations of several context managers defined in `contextlib`'s spec, see [the API documentation for details](https://github.com/mcataford/contextlib-js/blob/master/API.md).
 
 You can use the basic (empty) context by using `with` and `do`:
 
@@ -25,7 +25,7 @@ ContextManager.with({ <some additional scope }).do(thing)
 // The net result of this logs the `scope` contents.
 ```
 
-You can also extend or use any of the ready-made contexts, detailed in the API reference.
+You can also extend or use any of the ready-made contexts or make your own using `createContext({...})`.
 
 ### Example
 
@@ -52,3 +52,24 @@ LoggedContext.do(thing)
 ```
 
 For most use cases, using `createContext` is the quickest way to go. Otherwise, you can roll out your own use case by extending the `AbstractContextManager` class.
+
+## Creating contexts
+
+You can create contexts using `createContext` and passing in overrides for `onEnter` and `onExit`:
+
+```
+const context = createContext({
+    onEnter: (scope: object) => {
+        // Code executed BEFORE the handler given to `do`
+        ...
+        // Should return an object that will be merged into the scope.
+    }
+
+    onExit: (error: object) => {
+        // Code executed AFTER the handler either terminates or errors.
+        // If `error` exists, it is the error thrown by the handler.
+    }
+})
+```
+
+Created contexts are classes that can be stored in your application and exported at will. They all inherit from `AbstractContextManager`.
